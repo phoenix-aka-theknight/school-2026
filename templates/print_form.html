@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Print – {{ data.get('pupil_name', 'Admission Form') }}</title>
+  <style>
+    /* ── PRINT / PDF STYLES ───────────────────────── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 11pt;
+      color: #000;
+      background: #fff;
+    }
+
+    @media print {
+      body { margin: 0; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+    }
+
+    .print-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 12mm 14mm;
+      background: #fff;
+    }
+
+    /* HEADER */
+    .hdr { text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 6px; }
+    .hdr .sverd { font-size: 9pt; }
+    .hdr h1 { font-size: 18pt; font-weight: bold; letter-spacing: 1px; }
+    .hdr .addr { font-size: 9pt; }
+    .serial-row { font-size: 9pt; margin-bottom: 4px; }
+
+    /* TITLE BLOCK */
+    .title-blk { display: flex; align-items: flex-start; gap: 12px; border: 1px solid #000; margin-bottom: 8px; padding: 6px; }
+    .photo-blk { border: 1px solid #000; width: 70px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 7pt; text-align: center; flex-shrink: 0; }
+    .title-center { flex: 1; text-align: center; }
+    .title-center h2 { font-size: 13pt; font-weight: bold; line-height: 1.5; }
+    .title-note { font-size: 7.5pt; font-style: italic; }
+    .office-blk { border: 1px solid #000; padding: 4px 8px; font-size: 8.5pt; min-width: 160px; }
+    .office-blk .office-title { font-weight: bold; text-align: center; }
+    .office-blk p { margin: 2px 0; }
+
+    /* FORM FIELDS */
+    .form-line { border: none; border-bottom: 1px dotted #333; background: transparent; font-family: inherit; font-size: 10.5pt; outline: none; }
+    .f-long  { width: 320px; }
+    .f-med   { width: 160px; }
+    .f-sm    { width: 60px; }
+    .f-xs    { width: 40px; }
+    .f-full  { width: 100%; }
+
+    /* ROWS */
+    .fr { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px; margin: 3px 0; font-size: 10.5pt; }
+    .lbl { font-weight: normal; white-space: nowrap; }
+    .sub { white-space: nowrap; margin-left: 4px; }
+    .indent { margin-left: 24px; }
+    .indent-lg { margin-left: 40px; }
+
+    /* TABLE */
+    .prev-tbl { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 10pt; }
+    .prev-tbl th, .prev-tbl td { border: 1px solid #000; padding: 3px 6px; }
+    .prev-tbl th { font-weight: bold; text-align: center; }
+    .prev-tbl td:first-child { text-align: center; width: 36px; }
+    .prev-tbl td:nth-child(3), .prev-tbl td:nth-child(4) { width: 60px; }
+
+    /* SECTIONS */
+    hr { border: none; border-top: 1px solid #000; margin: 8px 0; }
+    .decl-text { font-size: 10pt; margin: 6px 0; }
+    .sign-row  { display: flex; justify-content: space-between; margin-top: 12px; }
+    .sign-col  { display: flex; flex-direction: column; align-items: center; width: 30%; }
+    .sign-col2 { width: 45%; }
+    .sign-line { border-top: 1px solid #000; width: 100%; margin-bottom: 2px; }
+    .sign-cap  { font-size: 9pt; }
+    .office-section { border: 1px solid #000; padding: 8px; margin: 8px 0; }
+    .office-section h3 { text-align: center; font-size: 11pt; }
+    .office-section p  { font-size: 9.5pt; text-align: center; }
+    .decl-block { border-top: 2px solid #000; margin-top: 10px; padding-top: 8px; }
+    .decl-block h3 { text-align: center; font-size: 12pt; font-weight: bold; text-decoration: underline; }
+    .decl-para { font-size: 10pt; margin: 6px 0; text-align: justify; }
+    .footer-note { font-size: 9pt; font-style: italic; margin-top: 8px; }
+    .addr-note { font-size: 8pt; font-style: italic; color: #333; margin: 2px 0; }
+
+    /* NO-PRINT BUTTON */
+    .no-print { text-align: center; padding: 12px; }
+    .no-print button {
+      margin: 0 6px;
+      padding: 8px 24px;
+      font-size: 12pt;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: #f0f0f0;
+      border-radius: 4px;
+    }
+    .no-print button:hover { background: #ddd; }
+
+    .val { display: inline; font-weight: normal; }
+    .check-val { font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<!-- PRINT CONTROLS -->
+<div class="no-print" style="background:#e8e8e8; padding: 10px;">
+  <button onclick="window.print()">🖨️ Print</button>
+  <button onclick="window.close()">✖ Close</button>
+  <span style="margin-left:16px; font-size:10pt;">Student ID: <strong>{{ data.get('student_id','') }}</strong></span>
+</div>
+
+<div class="print-page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <p class="sverd">SVERD Society's</p>
+    <h1>SANJEEVINI CONVENT SCHOOL</h1>
+    <p class="addr">HULGUR 581126 &nbsp; TQ: SHIGGAON &nbsp; DIST: HAVERI (KARNATAKA)</p>
+  </div>
+  <div class="serial-row">
+    Serial No : <span class="val">{{ data.get('serial_no','') }}</span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Date : <span class="val">{{ data.get('form_date','') }}</span>
+  </div>
+
+  <!-- TITLE BLOCK -->
+  <div class="title-blk">
+    <div class="photo-blk">Affix<br/>Passport<br/>Photo</div>
+    <div class="title-center">
+      <h2>APPLICATION FORM</h2>
+      <h2>FOR CLASSES</h2>
+      <h2>NURSERY TO VII</h2>
+      <p class="title-note">P.S : Fill in the given particulars with legible handwriting</p>
+    </div>
+    <div class="office-blk">
+      <p class="office-title">(For office Use only)</p>
+      <p>Standard : {{ data.get('o_standard','') }} &nbsp; Sec : {{ data.get('o_sec','') }}</p>
+      <p>Admn. No : {{ data.get('o_admn','') }}</p>
+      <p>Headmaster : {{ data.get('o_hm','') }}</p>
+      <p>Principal : {{ data.get('o_principal','') }}</p>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- 1. Name -->
+  <div class="fr">
+    <span class="lbl">1. Name of the pupil in full :</span>
+    <input class="form-line f-long" value="{{ data.get('pupil_name','') }}" readonly/>
+  </div>
+
+  <!-- 2. Sex -->
+  <div class="fr">
+    <span class="lbl">2. Sex :</span>
+    <span class="sub">Boy [<span class="check-val">{{ 'X' if data.get('sex')=='Boy' else '&nbsp;' }}</span>]</span>
+    <span class="sub ml20">Girl [<span class="check-val">{{ 'X' if data.get('sex')=='Girl' else '&nbsp;' }}</span>]</span>
+  </div>
+
+  <!-- 3. DOB -->
+  <div class="fr">
+    <span class="lbl">3. Date of Birth (in figure)</span>
+    <span class="sub">Day : <input class="form-line f-xs" value="{{ data.get('dob_day','') }}" readonly/></span>
+    <span class="sub">Month : <input class="form-line f-xs" value="{{ data.get('dob_month','') }}" readonly/></span>
+    <span class="sub">Year : <input class="form-line f-sm" value="{{ data.get('dob_year','') }}" readonly/></span>
+  </div>
+  <div class="fr">
+    <span class="lbl">In words :</span>
+    <input class="form-line f-long" value="{{ data.get('dob_words','') }}" readonly/>
+  </div>
+
+  <!-- 4. Place of Birth -->
+  <div class="fr">
+    <span class="lbl">4. Place of Birth</span>
+    <span class="sub">Village : <input class="form-line f-med" value="{{ data.get('village','') }}" readonly/></span>
+    <span class="sub">Town : <input class="form-line f-med" value="{{ data.get('town','') }}" readonly/></span>
+  </div>
+  <div class="fr indent">
+    <span class="sub">Taluk : <input class="form-line f-med" value="{{ data.get('taluk','') }}" readonly/></span>
+    <span class="sub">District : <input class="form-line f-med" value="{{ data.get('district','') }}" readonly/></span>
+    <span class="sub">State : <input class="form-line f-med" value="{{ data.get('state','') }}" readonly/></span>
+  </div>
+
+  <!-- 5. Parents -->
+  <div class="fr" style="margin-top:5px">
+    <span class="lbl">5. a) Name of the Father :</span>
+    <input class="form-line f-med" value="{{ data.get('father_name','') }}" readonly/>
+    <span class="sub">Qualification : <input class="form-line f-sm" value="{{ data.get('father_qual','') }}" readonly/></span>
+  </div>
+  <div class="fr indent">
+    <span class="sub">Occupation : <input class="form-line f-sm" value="{{ data.get('father_occ','') }}" readonly/></span>
+    <span class="sub">Annual Income : <input class="form-line f-sm" value="{{ data.get('father_income','') }}" readonly/></span>
+    <span class="sub">Living [<span class="check-val">{{ 'X' if data.get('father_living') else '&nbsp;' }}</span>]</span>
+    <span class="sub">Not Living [<span class="check-val">{{ 'X' if data.get('father_not_living') else '&nbsp;' }}</span>]</span>
+  </div>
+
+  <div class="fr" style="margin-top:4px">
+    <span class="lbl">b) Name of the Mother :</span>
+    <input class="form-line f-med" value="{{ data.get('mother_name','') }}" readonly/>
+    <span class="sub">Qualification : <input class="form-line f-sm" value="{{ data.get('mother_qual','') }}" readonly/></span>
+  </div>
+  <div class="fr indent">
+    <span class="sub">Occupation : <input class="form-line f-sm" value="{{ data.get('mother_occ','') }}" readonly/></span>
+    <span class="sub">Annual Income : <input class="form-line f-sm" value="{{ data.get('mother_income','') }}" readonly/></span>
+    <span class="sub">Living [<span class="check-val">{{ 'X' if data.get('mother_living') else '&nbsp;' }}</span>]</span>
+    <span class="sub">Not Living [<span class="check-val">{{ 'X' if data.get('mother_not_living') else '&nbsp;' }}</span>]</span>
+  </div>
+
+  <div class="fr" style="margin-top:4px">
+    <span class="lbl">c) Name of the Father's Father :</span>
+    <input class="form-line f-long" value="{{ data.get('grandfather_name','') }}" readonly/>
+  </div>
+
+  <!-- 6. Aadhar -->
+  <div class="fr" style="margin-top:5px">
+    <span class="lbl">6. a) Child Aadhar No :</span>
+    <input class="form-line f-long" value="{{ data.get('child_aadhar','') }}" readonly/>
+  </div>
+  <div class="fr indent">
+    <span class="lbl">Father Aadhar No :</span>
+    <input class="form-line f-long" value="{{ data.get('father_aadhar','') }}" readonly/>
+  </div>
+  <div class="fr indent">
+    <span class="lbl">Mother Aadhar No :</span>
+    <input class="form-line f-long" value="{{ data.get('mother_aadhar','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <span class="lbl">b) Ration card no :</span>
+    <input class="form-line f-long" value="{{ data.get('ration_card','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <span class="lbl">c) Bank A/c no :</span>
+    <input class="form-line f-long" value="{{ data.get('bank_ac','') }}" readonly/>
+  </div>
+  <div class="fr indent">
+    <span class="lbl">IFSC Code :</span>
+    <input class="form-line f-med" value="{{ data.get('ifsc','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <span class="lbl">d) Dise no of child :</span>
+    <input class="form-line f-long" value="{{ data.get('dise_no','') }}" readonly/>
+  </div>
+
+  <!-- 7. Nationality -->
+  <div class="fr" style="margin-top:5px">
+    <span class="lbl">7. Nationality :</span>
+    <input class="form-line f-sm" value="{{ data.get('nationality','') }}" readonly/>
+    <span class="sub">Religion : <input class="form-line f-sm" value="{{ data.get('religion','') }}" readonly/></span>
+    <span class="sub">Caste : <input class="form-line f-sm" value="{{ data.get('caste','') }}" readonly/></span>
+    <span class="sub">Sub caste : <input class="form-line f-sm" value="{{ data.get('sub_caste','') }}" readonly/></span>
+  </div>
+
+  <!-- 8 -->
+  <div class="fr">
+    <span class="lbl">8. Scheduled Caste / Tribe, (If so attach original certificate) No :</span>
+    <input class="form-line f-sm" value="{{ data.get('sc_no','') }}" readonly/>
+    <span class="sub">Date : <input class="form-line f-sm" value="{{ data.get('sc_date','') }}" readonly/></span>
+  </div>
+
+  <!-- 9 -->
+  <div class="fr">
+    <span class="lbl">9. Mother Tongue :</span>
+    <input class="form-line f-long" value="{{ data.get('mother_tongue','') }}" readonly/>
+  </div>
+
+  <!-- 10 -->
+  <div class="fr">
+    <span class="lbl">10. Other Languages Spoken :</span>
+    <input class="form-line f-long" value="{{ data.get('other_languages','') }}" readonly/>
+  </div>
+
+  <!-- 11. Address -->
+  <div class="fr" style="margin-top:5px">
+    <span class="lbl">11. Parents Permanent Address :</span>
+    <input class="form-line f-long" value="{{ data.get('parent_address1','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <span class="lbl indent">(In BLOCK LETTERS)</span>
+    <input class="form-line f-long" value="{{ data.get('parent_address2','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <input class="form-line f-full" value="{{ data.get('parent_address3','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <input class="form-line f-full" value="{{ data.get('parent_address4','') }}" readonly/>
+  </div>
+  <p class="addr-note">Parents Address of the pupil (Correct address will ensure quick delivery of letter / fees / marks statement Etc)</p>
+
+  <!-- 12. Guardian -->
+  <div class="fr" style="margin-top:6px">
+    <span class="lbl">12. Guardians Address :</span>
+    <input class="form-line f-long" value="{{ data.get('guardian_address1','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <span class="lbl indent">(In BLOCK LETTERS)</span>
+    <input class="form-line f-long" value="{{ data.get('guardian_address2','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <input class="form-line f-full" value="{{ data.get('guardian_address3','') }}" readonly/>
+  </div>
+  <div class="fr">
+    <input class="form-line f-full" value="{{ data.get('guardian_address4','') }}" readonly/>
+  </div>
+
+  <!-- 13. Previous School -->
+  <div class="fr" style="margin-top:6px">
+    <span class="lbl">13. Particulars about previous School attended :</span>
+  </div>
+  <table class="prev-tbl">
+    <thead>
+      <tr>
+        <th>Sl.no</th>
+        <th>Name of the school last attended</th>
+        <th>Class</th>
+        <th>Year</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in range(1, 4) %}
+      <tr>
+        <td>{{ i }}</td>
+        <td>{{ data.get('prev_school_' ~ i, '') }}</td>
+        <td>{{ data.get('prev_class_' ~ i, '') }}</td>
+        <td>{{ data.get('prev_year_' ~ i, '') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- 14. SLC -->
+  <div class="fr" style="margin-top:6px">
+    <span class="lbl">14. Whether the pupil has produced the school leaving certificate from the last school attended</span>
+  </div>
+  <div class="fr indent">
+    <span class="sub">Yes [<span class="check-val">{{ 'X' if data.get('slc')=='Yes' else '&nbsp;' }}</span>]</span>
+    <span class="sub ml20">No [<span class="check-val">{{ 'X' if data.get('slc')=='No' else '&nbsp;' }}</span>]</span>
+    <span class="sub ml20">No : <input class="form-line f-med" value="{{ data.get('slc_no_num','') }}" readonly/></span>
+  </div>
+
+  <!-- 15. Vaccination -->
+  <div class="fr">
+    <span class="lbl">15. Whether vaccinated or not ?</span>
+    <span class="sub">Yes [<span class="check-val">{{ 'X' if data.get('vacc')=='Yes' else '&nbsp;' }}</span>]</span>
+    <span class="sub">No [<span class="check-val">{{ 'X' if data.get('vacc')=='No' else '&nbsp;' }}</span>]</span>
+    <span class="sub ml20">Certificate attached</span>
+    <span class="sub">Yes [<span class="check-val">{{ 'X' if data.get('vacc_cert')=='Yes' else '&nbsp;' }}</span>]</span>
+    <span class="sub">No [<span class="check-val">{{ 'X' if data.get('vacc_cert')=='No' else '&nbsp;' }}</span>]</span>
+  </div>
+
+  <!-- 16. Medium -->
+  <div class="fr">
+    <span class="lbl">16. Medium of Instruction :</span>
+    <input class="form-line f-long" value="{{ data.get('medium','') }}" readonly/>
+  </div>
+
+  <hr/>
+
+  <!-- Declaration -->
+  <p class="decl-text">
+    I do solemnly pledged that the particulars given are to the best of my knowledge, Please grant admission for
+    my son / daughter / ward into class :
+    <input class="form-line f-xs" value="{{ data.get('admission_class','') }}" readonly/>
+  </p>
+  <div class="sign-row">
+    <div>Date : <input class="form-line f-med" value="{{ data.get('sign_date','') }}" readonly/></div>
+    <div>Parents signature : <input class="form-line f-med" value="{{ data.get('parent_sign','') }}" readonly/></div>
+  </div>
+
+  <!-- Office Section -->
+  <div class="office-section" style="margin-top:10px">
+    <h3>PARTICULARS TO BE FILLED BY SCHOOL OFFICE</h3>
+    <p>Admitted into Primary School on payment of prescribed fees.</p>
+    <div class="fr" style="margin-top:6px; justify-content:flex-start; gap:20px">
+      <span>Standard : <input class="form-line f-sm" value="{{ data.get('o2_standard','') }}" readonly/></span>
+      <span>Section : <input class="form-line f-xs" value="{{ data.get('o2_sec','') }}" readonly/></span>
+      <span>Fee Receipt No. : <input class="form-line f-med" value="{{ data.get('o2_receipt','') }}" readonly/></span>
+    </div>
+    <div class="sign-row" style="margin-top:18px">
+      <div class="sign-col">
+        <div class="sign-line"></div>
+        <span class="sign-cap">Signature of the clerk</span>
+      </div>
+      <div class="sign-col">
+        <div class="sign-line"></div>
+        <span class="sign-cap">Date</span>
+      </div>
+      <div class="sign-col">
+        <div class="sign-line"></div>
+        <span class="sign-cap">Signature of H.M. / Principal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Declaration -->
+  <div class="decl-block">
+    <h3>DECLARATION</h3>
+    <div class="fr" style="margin-top:8px">
+      <span>I</span>
+      <input class="form-line f-long" value="{{ data.get('decl_applicant','') }}" readonly/>
+      <span>Son / Daughter of</span>
+      <input class="form-line f-med" value="{{ data.get('decl_parent','') }}" readonly/>
+    </div>
+    <div class="fr" style="font-size:9pt; color:#555; margin-left:20px; justify-content:space-between">
+      <span>(Applicant)</span>
+      <span style="margin-right:80px">(Parent)</span>
+    </div>
+    <p class="decl-para">
+      Hereby agree to abide by all the rules and regulations of the school mentioned in the Prospectus and to abide a
+      decision by the school administration during my period of stay in the school. I have no objection for my child
+      take moral instruction offered by the school.
+    </p>
+    <p class="decl-para" style="margin-top:6px">Further I promise to pay all the school fees.</p>
+    <div class="sign-row" style="margin-top:20px">
+      <div class="sign-col sign-col2">
+        <div class="sign-line"></div>
+        <span class="sign-cap">Applicant</span>
+      </div>
+      <div class="sign-col sign-col2">
+        <div class="sign-line"></div>
+        <span class="sign-cap">Parent</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer-note" style="margin-top:10px; border-top: 1px solid #000; padding-top:4px;">
+    Note : All the columns should be filled correctly, incomplete form will not be accepted.
+  </p>
+
+</div><!-- /print-page -->
+
+<script>
+  // Auto-trigger print dialog on load when opened in print tab
+  window.addEventListener('load', function() {
+    if (window.opener) {
+      // opened via window.open – let user click the print button
+    }
+  });
+</script>
+</body>
+</html>

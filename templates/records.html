@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saved Records – Sanjeevini Convent School</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<div class="app-navbar">
+  <span class="app-title">🏫 Sanjeevini Convent School – Records</span>
+  <div class="nav-actions">
+    <button class="nav-btn new-btn" onclick="window.location.href='/'">➕ New Form</button>
+  </div>
+</div>
+
+<div class="records-wrapper">
+  <div class="records-header">
+    <h2 class="records-title">📋 Saved Admission Records</h2>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="🔍 Search by name or Student ID…" oninput="searchRecords()"/>
+    </div>
+  </div>
+
+  <div id="records-count" class="records-count"></div>
+
+  <div id="records-container">
+    <div class="loading">Loading records…</div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+// ── Load all records on page load ───────────────────
+let allRecords = [];
+
+async function loadRecords(query = '') {
+  const url = query ? `/api/records?q=${encodeURIComponent(query)}` : '/api/records';
+  const resp = await fetch(url);
+  allRecords = await resp.json();
+  renderRecords(allRecords);
+}
+
+function searchRecords() {
+  const q = document.getElementById('search-input').value.trim();
+  loadRecords(q);
+}
+
+function renderRecords(records) {
+  const container = document.getElementById('records-container');
+  const countEl   = document.getElementById('records-count');
+
+  countEl.textContent = `${records.length} record(s) found`;
+
+  if (records.length === 0) {
+    container.innerHTML = '<div class="no-records">No records found. <a href="/">Create a new admission form →</a></div>';
+    return;
+  }
+
+  container.innerHTML = `
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>Sex</th>
+          <th>Date of Birth</th>
+          <th>Saved On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${records.map(r => `
+          <tr>
+            <td><span class="sid-badge">${r.student_id}</span></td>
+            <td><strong>${r.name || '—'}</strong></td>
+            <td>${r.sex || '—'}</td>
+            <td>${formatDOB(r.dob_day, r.dob_month, r.dob_year)}</td>
+            <td>${r.created_at}</td>
+            <td class="action-btns">
+              <button class="tbl-btn edit-btn" onclick="editRecord('${r.student_id}')">✏️ Edit</button>
+              <button class="tbl-btn print-btn" onclick="printRecord('${r.student_id}')">🖨️ Print</button>
+              <button class="tbl-btn del-btn"  onclick="deleteRecord('${r.student_id}', this)">🗑️ Delete</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function formatDOB(d, m, y) {
+  if (!d && !m && !y) return '—';
+  return [d, m, y].filter(Boolean).join('/');
+}
+
+function editRecord(sid) {
+  window.location.href = `/?load=${sid}`;
+}
+
+function printRecord(sid) {
+  window.open(`/print/${sid}`, '_blank');
+}
+
+async function deleteRecord(sid, btn) {
+  if (!confirm(`Delete record ${sid}? This cannot be undone.`)) return;
+  btn.disabled = true;
+  const resp = await fetch(`/api/record/${sid}`, { method: 'DELETE' });
+  const data = await resp.json();
+  if (data.success) {
+    showToast('Record deleted.');
+    loadRecords(document.getElementById('search-input').value.trim());
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 3000);
+}
+
+// ── Init ─────────────────────────────────────────────
+loadRecords();
+</script>
+</body>
+</html>

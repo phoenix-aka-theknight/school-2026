@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sanjeevini Convent School – Admission Form</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<!-- ── TOP NAV BAR ───────────────────────────────────── -->
+<div class="app-navbar">
+  <span class="app-title">🏫 Sanjeevini Convent School – Admission System</span>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="window.location.href='/records'">📋 View Records</button>
+    <button class="nav-btn new-btn" onclick="resetForm()">➕ New Form</button>
+  </div>
+</div>
+
+<!-- ── ACTION BAR ────────────────────────────────────── -->
+<div class="action-bar">
+  <div class="action-left">
+    <span id="student-id-badge" class="badge-hidden">Student ID: <strong id="current-sid"></strong></span>
+  </div>
+  <div class="action-right">
+    <button class="btn-save"   onclick="saveForm()">💾 Save Record</button>
+    <button class="btn-print"  onclick="printForm()">🖨️ Print Form</button>
+    <button class="btn-pdf"    onclick="downloadPDF()">📄 Download PDF</button>
+  </div>
+</div>
+
+<!-- ── FORM WRAPPER ──────────────────────────────────── -->
+<div class="page-wrapper">
+<div class="form-paper" id="form-paper">
+
+  <!-- HEADER -->
+  <div class="school-header">
+    <div class="school-logo">
+      <div class="logo-circle">
+        <span class="logo-text">SCS</span>
+      </div>
+    </div>
+    <div class="school-info">
+      <p class="sverd">SVERD Society's</p>
+      <h1 class="school-name">SANJEEVINI CONVENT SCHOOL</h1>
+      <p class="school-address">HULGUR 581126 &nbsp; TQ: SHIGGAON &nbsp; DIST: HAVERI (KARNATAKA)</p>
+      <p class="school-date">Date : <span class="date-underline"><input type="date" id="form_date" class="inline-date"/></span></p>
+    </div>
+  </div>
+  <div class="serial-row">
+    <span>Serial No : <input type="text" id="serial_no" class="serial-input" placeholder="…………"/></span>
+  </div>
+
+  <!-- APPLICATION TITLE BLOCK -->
+  <div class="title-block">
+    <div class="photo-box">
+      <div class="photo-placeholder">Affix Photo<br/>here</div>
+    </div>
+    <div class="app-title-center">
+      <h2 class="app-heading">APPLICATION FORM</h2>
+      <h2 class="app-heading">FOR CLASSES</h2>
+      <h2 class="app-heading">NURSERY TO VII</h2>
+      <p class="app-note">P.S : Fill in the given particulars with legible handwriting</p>
+    </div>
+    <div class="office-use-box">
+      <p class="office-title">(For office Use only)</p>
+      <p>Standard : <input type="text" class="office-input" id="o_standard"/> &nbsp; Sec : <input type="text" class="office-input sm" id="o_sec"/></p>
+      <p>Admn. No : <input type="text" class="office-input" id="o_admn"/></p>
+      <p>Headmaster : <input type="text" class="office-input" id="o_hm"/></p>
+      <p>Principal : <input type="text" class="office-input" id="o_principal"/></p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- SECTION: STUDENT DETAILS -->
+  <div class="form-section">
+
+    <!-- 1. Name -->
+    <div class="form-row">
+      <label class="field-label">1. Name of the pupil in full</label>
+      <input type="text" id="pupil_name" class="field-line long" placeholder="…………………………………………………………"/>
+    </div>
+
+    <!-- 2. Sex -->
+    <div class="form-row">
+      <label class="field-label">2. Sex :</label>
+      <label class="check-label"><input type="radio" name="sex" value="Boy" id="sex_boy"/> Boy</label>
+      <label class="check-label"><input type="radio" name="sex" value="Girl" id="sex_girl"/> Girl</label>
+    </div>
+
+    <!-- 3. Date of Birth -->
+    <div class="form-row">
+      <label class="field-label">3. Date of Birth (in figure)</label>
+      <span class="sub-label">Day :</span> <input type="text" id="dob_day"   class="field-small" maxlength="2" placeholder="DD"/>
+      <span class="sub-label">Month :</span> <input type="text" id="dob_month" class="field-small" maxlength="2" placeholder="MM"/>
+      <span class="sub-label">Year :</span> <input type="text" id="dob_year"  class="field-small" maxlength="4" placeholder="YYYY"/>
+    </div>
+    <div class="form-row">
+      <label class="field-label">In words :</label>
+      <input type="text" id="dob_words" class="field-line long" placeholder="…………………………………………………"/>
+    </div>
+
+    <!-- 4. Place of Birth -->
+    <div class="form-row">
+      <label class="field-label">4. Place of Birth</label>
+      <span class="sub-label">Village :</span> <input type="text" id="village" class="field-med" placeholder="……………………"/>
+      <span class="sub-label">Town :</span> <input type="text" id="town" class="field-med" placeholder="……………………"/>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">Taluk :</span> <input type="text" id="taluk" class="field-med" placeholder="……………………"/>
+      <span class="sub-label">District :</span> <input type="text" id="district" class="field-med" placeholder="……………………"/>
+      <span class="sub-label">State :</span> <input type="text" id="state" class="field-med" placeholder="……………………"/>
+    </div>
+
+    <!-- 5. Parent Details -->
+    <div class="form-row mt8">
+      <label class="field-label">5. a) Name of the Father :</label>
+      <input type="text" id="father_name" class="field-line med" placeholder="……………………………………"/>
+      <span class="sub-label">Qualification :</span>
+      <input type="text" id="father_qual" class="field-med" placeholder="…………………"/>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">Occupation :</span>
+      <input type="text" id="father_occ" class="field-med" placeholder="…………………"/>
+      <span class="sub-label">Annual Income :</span>
+      <input type="text" id="father_income" class="field-med" placeholder="…………………"/>
+      <span class="sub-label">Living</span>
+      <label class="check-label"><input type="checkbox" id="father_living" name="father_living"/> ☐</label>
+      <span class="sub-label">Not Living</span>
+      <label class="check-label"><input type="checkbox" id="father_not_living" name="father_not_living"/> ☐</label>
+    </div>
+
+    <div class="form-row mt4">
+      <label class="field-label">b) Name of the Mother :</label>
+      <input type="text" id="mother_name" class="field-line med" placeholder="……………………………………"/>
+      <span class="sub-label">Qualification :</span>
+      <input type="text" id="mother_qual" class="field-med" placeholder="…………………"/>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">Occupation :</span>
+      <input type="text" id="mother_occ" class="field-med" placeholder="…………………"/>
+      <span class="sub-label">Annual Income :</span>
+      <input type="text" id="mother_income" class="field-med" placeholder="…………………"/>
+      <span class="sub-label">Living</span>
+      <label class="check-label"><input type="checkbox" id="mother_living"/> ☐</label>
+      <span class="sub-label">Not Living</span>
+      <label class="check-label"><input type="checkbox" id="mother_not_living"/> ☐</label>
+    </div>
+
+    <div class="form-row mt4">
+      <label class="field-label">c) Name of the Father's Father :</label>
+      <input type="text" id="grandfather_name" class="field-line long" placeholder="……………………………………………………"/>
+    </div>
+
+    <!-- 6. Aadhar / Documents -->
+    <div class="form-row mt8">
+      <label class="field-label">6. a) Child Aadhar No :</label>
+      <input type="text" id="child_aadhar" class="field-line long" maxlength="14" placeholder="XXXX XXXX XXXX"/>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">Father Aadhar No :</span>
+      <input type="text" id="father_aadhar" class="field-line long" maxlength="14" placeholder="XXXX XXXX XXXX"/>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">Mother Aadhar No :</span>
+      <input type="text" id="mother_aadhar" class="field-line long" maxlength="14" placeholder="XXXX XXXX XXXX"/>
+    </div>
+    <div class="form-row">
+      <label class="field-label">b) Ration card no :</label>
+      <input type="text" id="ration_card" class="field-line long" placeholder="…………………………………………"/>
+    </div>
+    <div class="form-row">
+      <label class="field-label">c) Bank A/c no :</label>
+      <input type="text" id="bank_ac" class="field-line long" placeholder="…………………………………………"/>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">IFSC Code :</span>
+      <input type="text" id="ifsc" class="field-med" placeholder="…………………"/>
+    </div>
+    <div class="form-row">
+      <label class="field-label">d) Dise no of child :</label>
+      <input type="text" id="dise_no" class="field-line long" placeholder="…………………………………………"/>
+    </div>
+
+    <!-- 7. Nationality -->
+    <div class="form-row mt8">
+      <label class="field-label">7. Nationality :</label>
+      <input type="text" id="nationality" class="field-small-med" placeholder="……………"/>
+      <span class="sub-label">Religion :</span>
+      <input type="text" id="religion" class="field-small-med" placeholder="……………"/>
+      <span class="sub-label">Caste :</span>
+      <input type="text" id="caste" class="field-small-med" placeholder="……………"/>
+      <span class="sub-label">Sub caste :</span>
+      <input type="text" id="sub_caste" class="field-small-med" placeholder="……………"/>
+    </div>
+
+    <!-- 8. Scheduled Caste -->
+    <div class="form-row">
+      <label class="field-label">8. Scheduled Caste / Tribe, (If so attach original certificate) No :</label>
+      <input type="text" id="sc_no" class="field-small-med" placeholder="…………"/>
+      <span class="sub-label">Date :</span>
+      <input type="text" id="sc_date" class="field-small-med" placeholder="…………"/>
+    </div>
+
+    <!-- 9. Mother Tongue -->
+    <div class="form-row">
+      <label class="field-label">9. Mother Tongue :</label>
+      <input type="text" id="mother_tongue" class="field-line long" placeholder="…………………………………………"/>
+    </div>
+
+    <!-- 10. Other Languages -->
+    <div class="form-row">
+      <label class="field-label">10. Other Languages Spoken :</label>
+      <input type="text" id="other_languages" class="field-line long" placeholder="…………………………………………"/>
+    </div>
+
+    <!-- 11. Parents Permanent Address -->
+    <div class="form-row mt4">
+      <label class="field-label">11. Parents Permanent Address :</label>
+      <input type="text" id="parent_address1" class="field-line long" placeholder="…………………………………………………………………"/>
+    </div>
+    <div class="form-row">
+      <span class="indent-big">(In BLOCK LETTERS)</span>
+      <input type="text" id="parent_address2" class="field-line long" placeholder="…………………………………………………………………"/>
+    </div>
+    <div class="form-row">
+      <input type="text" id="parent_address3" class="field-line full" placeholder="…………………………………………………………………………………………"/>
+    </div>
+    <div class="form-row">
+      <input type="text" id="parent_address4" class="field-line full" placeholder="…………………………………………………………………………………………"/>
+    </div>
+
+    <div class="address-note">
+      Parents Address of the pupil (Correct address will ensure quick delivery of letter / fees / marks statement Etc)
+    </div>
+
+    <!-- 12. Guardian Address -->
+    <div class="form-row mt8">
+      <label class="field-label">12. Guardians Address :</label>
+      <input type="text" id="guardian_address1" class="field-line long" placeholder="…………………………………………………………………"/>
+    </div>
+    <div class="form-row">
+      <span class="indent-big">(In BLOCK LETTERS)</span>
+      <input type="text" id="guardian_address2" class="field-line long" placeholder="…………………………………………………………………"/>
+    </div>
+    <div class="form-row">
+      <input type="text" id="guardian_address3" class="field-line full" placeholder="…………………………………………………………………………………………"/>
+    </div>
+    <div class="form-row">
+      <input type="text" id="guardian_address4" class="field-line full" placeholder="…………………………………………………………………………………………"/>
+    </div>
+
+    <!-- 13. Previous School Table -->
+    <div class="form-row mt8">
+      <label class="field-label">13. Particulars about previous School attended :</label>
+    </div>
+    <table class="prev-school-table">
+      <thead>
+        <tr>
+          <th>Sl.no</th>
+          <th>Name of the school last attended</th>
+          <th>Class</th>
+          <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><input type="text" class="table-input" id="prev_school_1" placeholder=""/></td>
+          <td><input type="text" class="table-input-sm" id="prev_class_1" placeholder=""/></td>
+          <td><input type="text" class="table-input-sm" id="prev_year_1" placeholder=""/></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><input type="text" class="table-input" id="prev_school_2" placeholder=""/></td>
+          <td><input type="text" class="table-input-sm" id="prev_class_2" placeholder=""/></td>
+          <td><input type="text" class="table-input-sm" id="prev_year_2" placeholder=""/></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><input type="text" class="table-input" id="prev_school_3" placeholder=""/></td>
+          <td><input type="text" class="table-input-sm" id="prev_class_3" placeholder=""/></td>
+          <td><input type="text" class="table-input-sm" id="prev_year_3" placeholder=""/></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 14. School Leaving Certificate -->
+    <div class="form-row mt8">
+      <label class="field-label">14. Whether the pupil has produced the school leaving certificate from the last school attended</label>
+    </div>
+    <div class="form-row">
+      <span class="sub-label-indent">Yes</span>
+      <label class="check-label"><input type="radio" name="slc" value="Yes" id="slc_yes"/> ☐</label>
+      <span class="sub-label ml20">No</span>
+      <label class="check-label"><input type="radio" name="slc" value="No" id="slc_no"/> ☐</label>
+      <span class="sub-label ml20">No :</span>
+      <input type="text" id="slc_no_num" class="field-med" placeholder="…………………………"/>
+    </div>
+
+    <!-- 15. Vaccination -->
+    <div class="form-row mt4">
+      <label class="field-label">15. Whether vaccinated or not ?</label>
+      <span class="sub-label">Yes</span>
+      <label class="check-label"><input type="radio" name="vacc" value="Yes" id="vacc_yes"/> ☐</label>
+      <span class="sub-label">No</span>
+      <label class="check-label"><input type="radio" name="vacc" value="No" id="vacc_no"/> ☐</label>
+      <span class="sub-label ml20">Certificate attached</span>
+      <span class="sub-label">Yes</span>
+      <label class="check-label"><input type="radio" name="vacc_cert" value="Yes" id="vacc_cert_yes"/> ☐</label>
+      <span class="sub-label">No</span>
+      <label class="check-label"><input type="radio" name="vacc_cert" value="No" id="vacc_cert_no"/> ☐</label>
+    </div>
+
+    <!-- 16. Medium of Instruction -->
+    <div class="form-row mt4">
+      <label class="field-label">16. Medium of Instruction :</label>
+      <input type="text" id="medium" class="field-line long" placeholder="…………………………………………"/>
+    </div>
+
+  </div><!-- /form-section -->
+
+  <hr class="divider"/>
+
+  <!-- DECLARATION -->
+  <div class="declaration-section">
+    <p class="declaration-text">
+      I do solemnly pledged that the particulars given are to the best of my knowledge, Please grant admission for
+      my son / daughter / ward into class :
+      <input type="text" id="admission_class" class="field-small-med" placeholder="………"/>
+    </p>
+    <div class="sign-row">
+      <div class="sign-col">
+        <span>Date :</span>
+        <input type="text" id="sign_date" class="field-med" placeholder="…………………"/>
+      </div>
+      <div class="sign-col">
+        <span>Parents signature :</span>
+        <input type="text" id="parent_sign" class="field-med" placeholder="…………………"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFICE USE SECTION -->
+  <div class="office-section">
+    <p class="office-heading">PARTICULARS TO BE FILLED BY SCHOOL OFFICE</p>
+    <p class="office-sub">Admitted into Primary School on payment of prescribed fees.</p>
+    <div class="office-row">
+      <span>Standard :</span> <input type="text" id="o2_standard" class="office-input"/>
+      <span class="ml20">Section :</span> <input type="text" class="office-input sm" id="o2_sec"/>
+      <span class="ml20">Fee Receipt No. :</span> <input type="text" class="office-input" id="o2_receipt"/>
+    </div>
+    <div class="sign-row mt20">
+      <div class="sign-col-3">
+        <div class="sign-line"></div>
+        <p class="sign-caption">Signature of the clerk</p>
+      </div>
+      <div class="sign-col-3">
+        <div class="sign-line"></div>
+        <p class="sign-caption">Date</p>
+      </div>
+      <div class="sign-col-3">
+        <div class="sign-line"></div>
+        <p class="sign-caption">Signature of H.M. / Principal</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECLARATION BLOCK -->
+  <div class="decl-block">
+    <p class="decl-heading">DECLARATION</p>
+    <div class="form-row">
+      <span>I</span>
+      <input type="text" id="decl_applicant" class="field-line long" placeholder="………………………………………………………………"/>
+      <span>Son / Daughter of</span>
+      <input type="text" id="decl_parent" class="field-line long" placeholder="………………………………………………"/>
+    </div>
+    <div class="form-row decl-labels">
+      <span class="decl-sub">(Applicant)</span>
+      <span class="decl-sub-right">(Parent)</span>
+    </div>
+    <p class="decl-body">
+      Hereby agree to abide by all the rules and regulations of the school mentioned in the Prospectus and to abide a
+      decision by the school administration during my period of stay in the school. I have no objection for my child
+      take moral instruction offered by the school.
+    </p>
+    <p class="decl-body mt8">Further I promise to pay all the school fees.</p>
+    <div class="sign-row mt20">
+      <div class="sign-col-2">
+        <div class="sign-line"></div>
+        <p class="sign-caption">Applicant</p>
+      </div>
+      <div class="sign-col-2">
+        <div class="sign-line"></div>
+        <p class="sign-caption">Parent</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-footer">
+    <p>Note : All the columns should be filled correctly, incomplete form will not be accepted.</p>
+  </div>
+
+</div><!-- /form-paper -->
+</div><!-- /page-wrapper -->
+
+<!-- ── STATUS TOAST ──────────────────────────────────── -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="/static/js/form.js"></script>
+</body>
+</html>
